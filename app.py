@@ -6,7 +6,8 @@ import os
 FEEDBACK_FILE = "feedback_data.csv"
 
 # Load admin password from secrets
-ADMIN_PASSWORD = st.secrets["admin"]["password"]
+ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD")
+
 
 # Function to load existing feedback
 def load_feedback():
