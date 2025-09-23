@@ -14,7 +14,7 @@ def load_feedback():
         return pd.read_csv(FEEDBACK_FILE)
     else:
         return pd.DataFrame(columns=[
-            "Session Name", "Student Name", "USN", "Resource Person", "Topic", "Rating", "Feedback"
+            "Session Name", "Student Name","Email","USN", "Resource Person", "Topic", "Rating", "Feedback"
         ])
 
 # Function to save feedback
@@ -34,9 +34,10 @@ if menu == "Student":
     session_name = st.text_input("Name of the Session")
     student_name = st.text_input("Student Name")
     usn = st.text_input("Student USN")
+    email=st.text_input("Student Email")
     resource_person = st.text_input("Session Handled by")
     topic = st.text_input("Topic of the Session")
-    rating = st.slider("Rating", 1, 10, 5)
+    rating = st.slider("Rating", 1, 5, 1)
     feedback = st.text_area("Feedback")
 
     if st.button("Submit"):
@@ -45,6 +46,7 @@ if menu == "Student":
                 "Session Name": session_name,
                 "Student Name": student_name,
                 "USN": usn,
+                "Email":email,
                 "Resource Person": resource_person,
                 "Topic": topic,
                 "Rating": rating,
