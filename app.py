@@ -55,7 +55,17 @@ def save_session(session_name, resource_person, topic):
 st.set_page_config(page_title="Student Feedback Portal", layout="centered")
 st.markdown("<h1 style='text-align: center;'>🎓 Student Feedback Portal</h1>", unsafe_allow_html=True)
 
+# Track role selection and reset login state if role changes
+if "last_role" not in st.session_state:
+    st.session_state.last_role = None
+if "admin_logged_in" not in st.session_state:
+    st.session_state.admin_logged_in = False
+
 menu = st.sidebar.radio("Choose Role", ["Student", "Admin"])
+
+if menu != st.session_state.last_role:
+    st.session_state.admin_logged_in = False
+    st.session_state.last_role = menu
 
 # ---------------------- STUDENT PANEL ----------------------
 if menu == "Student":
@@ -110,9 +120,6 @@ if menu == "Student":
 elif menu == "Admin":
     st.markdown("### 🔐 Admin Panel")
 
-    if "admin_logged_in" not in st.session_state:
-        st.session_state.admin_logged_in = False
-
     if not st.session_state.admin_logged_in:
         password = st.text_input("Enter Admin Password", type="password")
         if st.button("🔓 Login"):
@@ -121,7 +128,8 @@ elif menu == "Admin":
                 st.success("Access Granted")
             else:
                 st.error("❌ Incorrect Password")
-    else:
+
+    if st.session_state.admin_logged_in:
         st.success("Welcome, Admin!")
 
         st.markdown("### ➕ Add New Session")
