@@ -1,61 +1,74 @@
 import streamlit as st
 import pandas as pd
+import mysql.connector
 import os
 
-# File paths
-FEEDBACK_FILE = "feedback_data.csv"
-SESSION_FILE = "session_data.csv"
+# DB connection
+def get_connection():
+    return mysql.connector.connect(
+        host=os.getenv("DB_HOST", "localhost"),
+        user=os.getenv("DB_USER", "root"),
+        password=os.getenv("DB_PASSWORD", "Chandu@123"),
+        database=os.getenv("DB_NAME", "feed")
+    )
 
-# Load admin password from environment variable or secrets
+# Admin password from env or secrets
 ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD") or st.secrets["admin"]["password"]
 
-# Load feedback data
+# ---------------------- DB Functions ----------------------
 def load_feedback():
-    if os.path.exists(FEEDBACK_FILE):
-        return pd.read_csv(FEEDBACK_FILE)
-    else:
-        return pd.DataFrame(columns=[
-            "Session Name", "Student Name", "USN", "Email",
-            "Resource Person", "Topic", "Rating", "Feedback"
-        ])
+    conn = get_connection()
+    cursor = conn.cursor(dictionary=True)
+    cursor.execute("SELECT * FROM feedback")
+    rows = cursor.fetchall()
+    conn.close()
+    return pd.DataFrame(rows)
 
-# Save feedback data
 def save_feedback(new_data):
-    df = load_feedback()
-    df = pd.concat([df, pd.DataFrame([new_data])], ignore_index=True)
-    df.to_csv(FEEDBACK_FILE, index=False)
+    conn = get_connection()
+    cursor = conn.cursor()
+    sql = """
+        INSERT INTO feedback (session_name, student_name, usn, email, resource_person, topic, rating, feedback)
+        VALUES (%s,%s,%s,%s,%s,%s,%s,%s)
+    """
+    cursor.execute(sql, (
+        new_data["Session Name"], new_data["Student Name"], new_data["USN"],
+        new_data["Email"], new_data["Resource Person"], new_data["Topic"],
+        new_data["Rating"], new_data["Feedback"]
+    ))
+    conn.commit()
+    conn.close()
 
-# Load session metadata
 def load_sessions():
-    if os.path.exists(SESSION_FILE):
-        return pd.read_csv(SESSION_FILE)
-    else:
-        return pd.DataFrame(columns=["Session Name", "Resource Person", "Topic"])
+    conn = get_connection()
+    cursor = conn.cursor(dictionary=True)
+    cursor.execute("SELECT * FROM sessions")
+    rows = cursor.fetchall()
+    conn.close()
+    return pd.DataFrame(rows)
 
-# Save new session
 def save_session(session_name, resource_person, topic):
-    df = load_sessions()
-    duplicate = df[
-        (df["Session Name"] == session_name) &
-        (df["Resource Person"] == resource_person) &
-        (df["Topic"] == topic)
-    ]
-    if not duplicate.empty:
+    conn = get_connection()
+    cursor = conn.cursor()
+    # Check duplicate
+    cursor.execute(
+        "SELECT * FROM sessions WHERE session_name=%s AND resource_person=%s AND topic=%s",
+        (session_name, resource_person, topic)
+    )
+    duplicate = cursor.fetchall()
+    if duplicate:
+        conn.close()
         return False
-    new_entry = pd.DataFrame([{
-        "Session Name": session_name,
-        "Resource Person": resource_person,
-        "Topic": topic
-    }])
-    df = pd.concat([df, new_entry], ignore_index=True)
-    df.to_csv(SESSION_FILE, index=False)
+    sql = "INSERT INTO sessions (session_name, resource_person, topic) VALUES (%s, %s, %s)"
+    cursor.execute(sql, (session_name, resource_person, topic))
+    conn.commit()
+    conn.close()
     return True
 
 # ---------------------- UI ----------------------
 st.set_page_config(page_title="Student Feedback Portal", layout="centered")
 st.markdown("<h1 style='text-align: center;'>🎓 Student Feedback Portal</h1>", unsafe_allow_html=True)
 
-# Track role selection and reset login state if role changes
 if "last_role" not in st.session_state:
     st.session_state.last_role = None
 if "admin_logged_in" not in st.session_state:
@@ -74,13 +87,13 @@ if menu == "Student":
     session_df = load_sessions()
 
     if not session_df.empty:
-        session_names = session_df["Session Name"].dropna().unique().tolist()
+        session_names = session_df["session_name"].dropna().unique().tolist()
         selected_session = st.selectbox("Select Session", [""] + session_names)
 
         if selected_session:
-            filtered_df = session_df[session_df["Session Name"] == selected_session]
-            resource_options = filtered_df["Resource Person"].dropna().unique().tolist()
-            topic_options = filtered_df["Topic"].dropna().unique().tolist()
+            filtered_df = session_df[session_df["session_name"] == selected_session]
+            resource_options = filtered_df["resource_person"].dropna().unique().tolist()
+            topic_options = filtered_df["topic"].dropna().unique().tolist()
 
             selected_resource = st.selectbox("Select Resource Person", [""] + resource_options)
             selected_topic = st.selectbox("Select Topic of the Session", [""] + topic_options)
@@ -153,10 +166,10 @@ elif menu == "Admin":
         st.markdown("### 📊 View Submitted Feedback")
         df = load_feedback()
         if not df.empty:
-            sessions = df["Session Name"].dropna().unique().tolist()
+            sessions = df["session_name"].dropna().unique().tolist()
             selected_session = st.selectbox("Filter by Session", ["All"] + sessions)
 
-            filtered_df = df if selected_session == "All" else df[df["Session Name"] == selected_session]
+            filtered_df = df if selected_session == "All" else df[df["session_name"] == selected_session]
             st.dataframe(filtered_df, use_container_width=True)
 
             csv = filtered_df.to_csv(index=False).encode('utf-8')
