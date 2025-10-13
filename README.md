@@ -1,2 +1,2 @@
-<p> life made easy by streamlit
+<p>trying to understand streamlit
 </p>
