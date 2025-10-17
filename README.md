@@ -55,76 +55,76 @@ id INT AUTO_INCREMENT PRIMARY KEY,
 );</code></pre>
 
 
-    <h3>3.2. Configuration (Environment Variables / Streamlit Secrets)</h3>
-    <p>Configure your database credentials and the admin password using environment variables.</p>
+<h3>3.2. Configuration (Environment Variables / Streamlit Secrets)</h3>
+<p>Configure your database credentials and the admin password using environment variables.</p>
 
-    <table>
-        <thead>
-            <tr>
-                <th>Variable</th>
-                <th>Description</th>
-                <th>Default Value in Code</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td><strong>DB_HOST</strong></td>
-                <td>MySQL Host Address</td>
-                <td><code>localhost</code></td>
-            </tr>
-            <tr>
-                <td><strong>DB_USER</strong></td>
-                <td>MySQL User</td>
-                <td><code>root</code></td>
-            </tr>
-            <tr>
-                <td><strong>DB_PASSWORD</strong></td>
-                <td>MySQL Password</td>
-                <td><code>Chandu@123</code> (<strong>MUST CHANGE</strong>)</td>
-            </tr>
-            <tr>
-                <td><strong>DB_NAME</strong></td>
-                <td>MySQL Database Name</td>
-                <td><code>feed</code></td>
-            </tr>
-            <tr>
-                <td><strong>ADMIN_PASSWORD</strong></td>
-                <td>Password for Admin Login</td>
-                <td>(Must be set)</td>
-            </tr>
-        </tbody>
-    </table>
+<table>
+    <thead>
+        <tr>
+            <th>Variable</th>
+            <th>Description</th>
+            <th>Default Value in Code</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><strong>DB_HOST</strong></td>
+            <td>MySQL Host Address</td>
+            <td><code>localhost</code></td>
+        </tr>
+        <tr>
+            <td><strong>DB_USER</strong></td>
+            <td>MySQL User</td>
+            <td><code>root</code></td>
+        </tr>
+        <tr>
+            <td><strong>DB_PASSWORD</strong></td>
+            <td>MySQL Password</td>
+            <td><code>Chandu@123</code> (<strong>MUST CHANGE</strong>)</td>
+        </tr>
+        <tr>
+            <td><strong>DB_NAME</strong></td>
+            <td>MySQL Database Name</td>
+            <td><code>feed</code></td>
+        </tr>
+        <tr>
+            <td><strong>ADMIN_PASSWORD</strong></td>
+            <td>Password for Admin Login</td>
+            <td>(Must be set)</td>
+        </tr>
+    </tbody>
+</table>
 
-    <p>You can set <code>ADMIN_PASSWORD</code> as an environment variable or in your Streamlit secrets file (<code>.streamlit/secrets.toml</code>):</p>
-    <pre><code># .streamlit/secrets.toml
+<p>You can set <code>ADMIN_PASSWORD</code> as an environment variable or in your Streamlit secrets file (<code>.streamlit/secrets.toml</code>):</p>
+<pre><code># .streamlit/secrets.toml
 [admin]
 password = "YourSecureAdminPasswordHere"</code></pre>
 
-    <hr>
+<hr>
 
-    <h2>4. HOW TO RUN</h2>
-    <p>Execute the Python file using Streamlit:</p>
-    <pre><code>streamlit run app_file_name.py</code></pre>
-    <p>(Replace <code>app_file_name.py</code> with your Python script name.)</p>
+<h2>4. HOW TO RUN</h2>
+<p>Execute the Python file using Streamlit:</p>
+<pre><code>streamlit run app_file_name.py</code></pre>
+<p>(Replace <code>app_file_name.py</code> with your Python script name.)</p>
 
-    <hr>
+<hr>
 
-    <h2>5. USAGE GUIDE</h2>
+<h2>5. USAGE GUIDE</h2>
 
-    <h3>STUDENT ROLE:</h3>
-    <ol>
-        <li>Select the <strong>Session</strong>, <strong>Resource Person</strong>, and <strong>Topic</strong> from the dropdowns.</li>
-        <li>Fill in required personal details (Name, USN, Email).</li>
-        <li>Set a <strong>Rating</strong> (1-5) and provide detailed <strong>Feedback</strong>.</li>
-        <li>Click <strong>Submit Feedback</strong>.</li>
-    </ol>
+<h3>STUDENT ROLE:</h3>
+<ol>
+    <li>Select the <strong>Session</strong>, <strong>Resource Person</strong>, and <strong>Topic</strong> from the dropdowns.</li>
+    <li>Fill in required personal details (Name, USN, Email).</li>
+    <li>Set a <strong>Rating</strong> (1-5) and provide detailed <strong>Feedback</strong>.</li>
+    <li>Click <strong>Submit Feedback</strong>.</li>
+</ol>
 
-    <h3>ADMIN ROLE:</h3>
-    <ol>
-        <li>Switch to the Admin role in the sidebar and enter the <strong>Admin Password</strong> to log in.</li>
-        <li><strong>Add New Session:</strong> Use the input fields to define a new session and make it available for students to review.</li>
-        <li><strong>View Submitted Feedback:</strong> Filter the data by session and use the <strong>Download Feedback as CSV</strong> button to export the collected results.</li>
-    </ol>
+<h3>ADMIN ROLE:</h3>
+<ol>
+    <li>Switch to the Admin role in the sidebar and enter the <strong>Admin Password</strong> to log in.</li>
+    <li><strong>Add New Session:</strong> Use the input fields to define a new session and make it available for students to review.</li>
+    <li><strong>View Submitted Feedback:</strong> Filter the data by session and use the <strong>Download Feedback as CSV</strong> button to export the collected results.</li>
+</ol>
 
-    <hr>
-    <p style="text-align: center; font-size: 0.9em;">END OF README</p>
+<hr>
+
